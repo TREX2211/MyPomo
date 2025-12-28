@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>MyPomo</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link
+  rel="icon"
+  type="image/svg+xml"
+  href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🍅</text></svg>"
+>
+</head>
+<body>
+
+  <!-- CONTENEDOR PRINCIPAL -->
+  <div class="container">
+
+    <h1 class="app-title">🍅 MyPomo 🚀</h1>
+    <p class="app-subtitle">simple, intuitivo y sin distracciones</p>
+
+    <div class="theme-toggle-wrapper">
+      <button id="dark-toggle" class="theme-btn">🌙</button>
+    </div>
+
+    <!-- CONTADOR -->
+    <div id="timer">25:00</div>
+
+    <!-- BOTONES CENTRALES -->
+      <div class="buttons">
+      <button id="toggle-timer">▶</button>
+      <button id="reset-timer" class="reset-btn" title="Reiniciar">
+  <!-- SVG DE SIEMPRE (el mismo que usaste antes) -->
+  <svg
+    viewBox="0 0 24 24"
+    width="22"
+    height="22"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M3 12a9 9 0 1 0 3-6.7"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+    <polyline
+      points="3 3 3 9 9 9"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+  </svg>
+</button>
+      <button id="settings-btn" title="Configurar duración">⚙️</button>
+    </div>
+
+    <!-- PARTE INFERIOR -->
+     <div class="center-block">
+      <div class="bottom-section">
+      <p id="mode">Modo: Personalizado 🎯</p>
+     </div>
+
+      <div class="presets">
+        <button class="preset-btn" data-work="25" data-break="5">🍅 Pomodoro</button>
+        <button class="preset-btn" data-work="50" data-break="10">🔥 Intenso</button>
+        <button class="preset-btn" data-work="40" data-break="8">📚 Estudio</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- MODAL (FUERA DEL CONTAINER) -->
+  <div id="settings-modal" class="modal hidden">
+    <div class="modal-content">
+      <h2>⏱ Configurar duración</h2>
+
+      <input
+        type="number"
+        id="modal-minutes"
+        min="1"
+        placeholder="Minutos"
+      >
+
+      <div class="modal-actions">
+        <button id="modal-cancel">Cancelar</button>
+        <button id="modal-apply">Aplicar</button>
+      </div>
+    </div>
+  </div>
+
+ <button id="feedback-btn" class="feedback-btn">Feedback 💬</button>
+ <div id="feedback-modal" class="modal hidden">
+  <div class="modal-content">
+    <h2>Déjame tu opinión</h2>
+
+    <textarea
+      id="feedback-text"
+      placeholder="Escribe aquí tu mensaje..."
+      rows="4"
+    ></textarea>
+
+    <div class="modal-actions">
+      <button id="feedback-cancel">Cancelar</button>
+      <button id="feedback-send">Enviar</button>
+    </div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
