@@ -1,3 +1,5 @@
+emailjs.init("qQbkK3EWdP3-ZvoSl");
+
 /* ======================
    SONIDO
 ====================== */
@@ -269,12 +271,7 @@ function playSendSound() {
   sendSound.play().catch(() => {});
 }
 
-async function sendFeedback(message) {
-  // Cargar EmailJS solo si aún no está cargado
-  if (typeof emailjs === "undefined") {
-    emailjs.init("qQbkK3EWdP3-ZvoSl");
-  }
-
+function sendFeedback(message) {
   return emailjs.send("service_8z66lcz", "template_youzqkj", {
     message
   });
