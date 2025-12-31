@@ -1,14 +1,28 @@
 /* ======================
-   EMAILJS INIT
-====================== */
-emailjs.init("qQbkK3EWdP3-ZvoSl");
-
-/* ======================
    SONIDO
 ====================== */
-const toggleSound = new Audio("toggle.mp3.wav");
-toggleSound.preload = "auto";
-toggleSound.volume = 0.4;
+let audioUnlocked = false;
+
+function unlockAudioContext() {
+  if (audioUnlocked) return;
+
+  const sound = new Audio("toggle.mp3.wav");
+  sound.volume = 0;
+  sound.play()
+    .then(() => {
+      sound.pause();
+      audioUnlocked = true;
+    })
+    .catch(() => {});
+}
+
+function playToggleSound() {
+  if (!audioUnlocked) return;
+
+  const sound = new Audio("toggle.mp3.wav");
+  sound.volume = 0.4;
+  sound.play().catch(() => {});
+}
 
 const bellSound = new Audio("bell.mp3");
 bellSound.preload = "auto";
@@ -26,7 +40,7 @@ let breakTime = 5 * 60;
 let timeLeft = workTime;
 let timer = null;
 let isWork = true;
-let currentModeLabel = "Personalizado 🎯";
+let currentModeLabel = "";
 let wakeLock = null;
 let hasStarted = false;
 
@@ -145,12 +159,19 @@ function resetTimer() {
 }
 
 function updateToggleButton() {
+  const playIcon = document.getElementById("play-icon");
+  const pauseIcon = document.getElementById("pause-icon");
+
   if (timer) {
-    toggleBtn.textContent = "⏸";
+    playIcon.style.display = "none";
+    pauseIcon.style.display = "block";
     toggleBtn.classList.add("running");
+    toggleBtn.setAttribute("aria-label", "Pausar temporizador");
   } else {
-    toggleBtn.textContent = "▶";
+    playIcon.style.display = "block";
+    pauseIcon.style.display = "none";
     toggleBtn.classList.remove("running");
+    toggleBtn.setAttribute("aria-label", "Iniciar temporizador");
   }
 
   // 🔓 Reset habilitado si ya se inició alguna vez
@@ -169,25 +190,22 @@ function setModeText(text) {
 }
 
 function applyCustomTime(minutes) {
-  pauseTimer();            // detener si está corriendo
+  pauseTimer();
+
   workTime = minutes * 60;
   timeLeft = workTime;
   isWork = true;
+  hasStarted = false;
 
   currentModeLabel = "Personalizado 🎯";
   setModeText("Modo: Personalizado 🎯");
 
   updateTimer();
+  updateToggleButton();
 
- // 💾 GUARDAR EN LOCALSTORAGE
- localStorage.setItem("workMinutes", minutes);
-}
-
-function unlockAudio() {
-  toggleSound.play().then(() => {
-    toggleSound.pause();
-    toggleSound.currentTime = 0;
-  }).catch(() => {});
+  // 🔑 estado
+  localStorage.setItem("workMinutes", minutes);
+  localStorage.removeItem("preset");
 }
 
 function applyPreset(workMinutes, breakMinutes, label) {
@@ -205,11 +223,14 @@ function applyPreset(workMinutes, breakMinutes, label) {
   updateTimer();
   updateToggleButton();
 
+  // 🔑 estado
   localStorage.setItem(
     "preset",
     JSON.stringify({ work: workMinutes, break: breakMinutes, label })
   );
+  localStorage.removeItem("workMinutes");
 }
+
 
 function showNotification(title, body) {
   if (!("Notification" in window)) return;
@@ -246,6 +267,18 @@ function playBellSound() {
 function playSendSound() {
   sendSound.currentTime = 0;
   sendSound.play().catch(() => {});
+}
+
+async function sendFeedback(message) {
+  // Cargar EmailJS solo si aún no está cargado
+  if (typeof emailjs === "undefined") {
+    await import("https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js");
+    emailjs.init("qQbkK3EWdP3-ZvoSl");
+  }
+
+  return emailjs.send("service_8z66lcz", "template_youzqkj", {
+    message
+  });
 }
 
 /* ======================
@@ -358,11 +391,9 @@ feedbackSend.addEventListener("click", () => {
   feedbackSend.disabled = true;
   feedbackSend.textContent = "Enviando...";
 
-  emailjs
-    .send("service_8z66lcz", "template_youzqkj", {
-      message: message
-    })
-    .then(() => {
+ sendFeedback(message)
+  .then(() => {
+  
   // activar animación
   feedbackModal.classList.add("sending");
   playSendSound();
@@ -411,7 +442,11 @@ modalMinutes.addEventListener("keydown", (e) => {
   }
 });
 
-function launchConfetti() {
+async function launchConfetti() {
+  if (typeof confetti === "undefined") {
+    await import("https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js");
+  }
+
   confetti({
     particleCount: 40,
     spread: 60,
@@ -473,8 +508,8 @@ if (localStorage.getItem("darkMode") === "enabled") {
 }
 
 darkToggle.addEventListener("click", () => {
-  toggleSound.currentTime = 0;
-  toggleSound.play().catch(() => {});
+  playToggleSound();
+
   document.body.classList.toggle("dark");
 
   const enabled = document.body.classList.contains("dark");
@@ -486,22 +521,33 @@ darkToggle.addEventListener("click", () => {
    INIT
 ====================== */
 document.title = "MyPomo";
-updateTimer();
-updateToggleButton();
-document.body.tabIndex = -1;
 
-
+// 1️⃣ restaurar tiempo personalizado (prioridad máxima)
 const savedMinutes = localStorage.getItem("workMinutes");
 
 if (savedMinutes) {
   applyCustomTime(Number(savedMinutes));
 } else {
-  updateTimer();
+  // 2️⃣ si no hay personalizado, restaurar preset
+  const savedPreset = localStorage.getItem("preset");
+
+  if (savedPreset) {
+    const { work, break: rest, label } = JSON.parse(savedPreset);
+    applyPreset(work, rest, label);
+  } else {
+    // 3️⃣ fallback absoluto
+    applyPreset(25, 5, "🍅 Pomodoro");
+  }
 }
 
+// UI final
+updateTimer();
 updateToggleButton();
+
+// Accesibilidad
+document.body.tabIndex = -1;
 
 /* ======================
    DESBLOQUEO AUDIO (Safari)
 ====================== */
-window.addEventListener("click", unlockAudio, { once: true });
+window.addEventListener("pointerdown", unlockAudioContext, { once: true });;

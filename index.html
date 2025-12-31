@@ -2,6 +2,14 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>MyPomo - Pomodoro Sencillo y Rápido, Hecho Para Ti</title>
+
+<meta
+  name="description"
+  content="MyPomo es un temporizador Pomodoro online, simple y gratuito. Mejora tu productividad y concentración sin distracciones y empieza a enfocarte en segundos."
+>
 
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-7GCGR0L1KE"></script>
@@ -9,14 +17,15 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-
   gtag('config', 'G-7GCGR0L1KE');
 </script>
 
-  <title>MyPomo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   
   <link rel="stylesheet" href="style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
   <link
   rel="icon"
   type="image/svg+xml"
@@ -40,7 +49,30 @@
 
     <!-- BOTONES CENTRALES -->
       <div class="buttons">
-      <button id="toggle-timer">▶</button>
+      <button id="toggle-timer" aria-label="Iniciar temporizador">
+  <svg
+    id="play-icon"
+    viewBox="0 0 24 24"
+    width="26"
+    height="26"
+    fill="currentColor"
+  >
+    <polygon points="5,3 19,12 5,21" />
+  </svg>
+
+  <svg
+    id="pause-icon"
+    viewBox="0 0 24 24"
+    width="26"
+    height="26"
+    fill="currentColor"
+    style="display: none;"
+  >
+    <rect x="5" y="4" width="5" height="16" />
+    <rect x="14" y="4" width="5" height="16" />
+  </svg>
+</button>
+
       <button id="reset-timer" class="reset-btn" title="Reiniciar">
   <!-- SVG DE SIEMPRE (el mismo que usaste antes) -->
   <svg
@@ -66,13 +98,30 @@
     />
   </svg>
 </button>
-      <button id="settings-btn" title="Configurar duración">⚙️</button>
+      <button id="settings-btn" title="Configurar duración" aria-label="Configurar duración">
+  <svg
+    viewBox="0 0 24 24"
+    width="22"
+    height="22"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+    <path
+      d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9c0 .66.39 1.26 1 1.51.31.13.65.19 1 .19H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+  </svg>
+</button>
     </div>
 
     <!-- PARTE INFERIOR -->
      <div class="center-block">
       <div class="bottom-section">
-      <p id="mode">Modo: Personalizado 🎯</p>
+      <p id="mode"></p>
      </div>
 
       <div class="presets">
@@ -120,8 +169,6 @@
     </div>
   </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
-<script src="app.js"></script>
+<script src="app.js" defer></script>
 </body>
 </html>

@@ -37,7 +37,8 @@ body.dark .app-subtitle {
   text-align: center;
   box-shadow: 0 10px 25px rgba(0,0,0,0.1);
 
-  width: 500px;
+  width: 100%;
+  max-width: 500px;
   height: 700px;
 
   display: flex;
@@ -322,7 +323,8 @@ body.dark .theme-btn {
   position: fixed;
   bottom: 20px;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translate3d(-50%, 0, 0);
+  will-change: transform;
 
   padding: 10px 20px;
   font-size: 18px;
@@ -334,6 +336,7 @@ body.dark .theme-btn {
   cursor: pointer;
 
   opacity: 0.85;
+  z-index: 9999;
 }
 
 .feedback-btn:hover {
@@ -368,4 +371,61 @@ body.dark .theme-btn {
     transform: scale(0.95);
     opacity: 0;
   }
+}
+
+@media (max-width: 600px) {
+
+  body {
+    align-items: flex-start;
+  }
+
+  .container {
+    border-radius: 0;
+    height: auto;
+    padding: 20px 16px;
+    padding-bottom: 110px;
+    min-height: 100vh;
+  }
+
+  h1 {
+    font-size: 32px;
+  }
+
+  .app-subtitle {
+    font-size: 16px;
+    margin-bottom: 12px;
+  }
+
+  #timer {
+    font-size: 90px;
+    height: auto;
+  }
+
+  .buttons {
+    gap: 16px;
+    margin: 16px 0;
+  }
+
+  #toggle-timer,
+  #reset-timer,
+  #settings-btn {
+    width: 60px;
+    height: 60px;
+    font-size: 26px;
+  }
+
+  .preset-btn {
+    font-size: 14px;
+    padding: 10px 14px;
+  }
+
+  #mode {
+    font-size: 16px;
+  }
+
+  .feedback-btn {
+    bottom: 8px;
+    font-size: 15px;
+  }
+
 }
