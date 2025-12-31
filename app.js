@@ -272,7 +272,6 @@ function playSendSound() {
 async function sendFeedback(message) {
   // Cargar EmailJS solo si aún no está cargado
   if (typeof emailjs === "undefined") {
-    await import("https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js");
     emailjs.init("qQbkK3EWdP3-ZvoSl");
   }
 
@@ -443,10 +442,6 @@ modalMinutes.addEventListener("keydown", (e) => {
 });
 
 async function launchConfetti() {
-  if (typeof confetti === "undefined") {
-    await import("https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js");
-  }
-
   confetti({
     particleCount: 40,
     spread: 60,
