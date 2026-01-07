@@ -57,9 +57,28 @@ const darkToggle = document.getElementById("dark-toggle");
 
 const settingsBtn = document.getElementById("settings-btn");
 const settingsModal = document.getElementById("settings-modal");
-const modalMinutes = document.getElementById("modal-minutes");
 const modalApply = document.getElementById("modal-apply");
 const modalCancel = document.getElementById("modal-cancel");
+const workInput = document.getElementById("work-minutes");
+const breakInput = document.getElementById("break-minutes");
+
+/* ======================
+   CONTROLES + / − (MODAL)
+====================== */
+document.querySelectorAll(".number-control button").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const input = document.getElementById(btn.dataset.target);
+    let value = Number(input.value);
+
+    if (btn.classList.contains("plus")) {
+      value++;
+    } else {
+      value = Math.max(1, value - 1);
+    }
+
+    input.value = value;
+  });
+});
 
 /* ======================
    FUNCIONES TIMER
@@ -254,10 +273,10 @@ function closeSettingsModal() {
   settingsModal.classList.add("hidden");
   document.body.classList.remove("modal-open");
 
-  // 🔑 quitar foco del input
-  modalMinutes.blur();
+  // quitar foco de inputs reales
+  workInput.blur();
+  breakInput.blur();
 
-  // devolver foco al body
   document.body.focus();
 }
 
@@ -331,25 +350,118 @@ document.querySelectorAll(".preset-btn").forEach(btn => {
    MODAL ⚙️
 ====================== */
 settingsBtn.addEventListener("click", () => {
+
+  // 1️⃣ Pasar los valores actuales al modal
+  workInput.value = Math.floor(workTime / 60);
+  breakInput.value = Math.floor(breakTime / 60);
+
+  // 2️⃣ Mostrar el modal
   settingsModal.classList.remove("hidden");
-  document.body.classList.add("modal-open"); // 🔑
-  modalMinutes.focus();
+  document.body.classList.add("modal-open");
+
+  // 3️⃣ Foco al primer input
+  workInput.focus();
 });
 
 modalCancel.addEventListener("click", closeSettingsModal);
 
 modalApply.addEventListener("click", () => {
-  const minutes = Number(modalMinutes.value);
 
-  if (!minutes || minutes <= 0) {
-    alert("Introduce un número válido");
+  // 1️⃣ Leer valores del modal
+  const workMinutes = Number(workInput.value);
+  const breakMinutes = Number(breakInput.value);
+
+  // 2️⃣ Validar valores
+  if (!workMinutes || workMinutes <= 0 || !breakMinutes || breakMinutes <= 0) {
+    alert("Introduce valores válidos");
     return;
   }
 
-  applyCustomTime(minutes);
-  modalMinutes.value = "";
+  // 3️⃣ Parar temporizador
+  pauseTimer();
 
-  closeSettingsModal(); // 👈 AQUÍ
+  // 4️⃣ Aplicar tiempos personalizados
+  workTime = workMinutes * 60;
+  breakTime = breakMinutes * 60;
+  timeLeft = workTime;
+  isWork = true;
+  hasStarted = false;
+
+  // 5️⃣ Etiqueta visual
+  currentModeLabel = "Personalizado 🎯";
+  setModeText("Modo: Personalizado 🎯");
+
+  // 6️⃣ Actualizar UI
+  updateTimer();
+  updateToggleButton();
+
+  // 7️⃣ Guardar configuración
+  localStorage.setItem("workMinutes", workMinutes);
+  localStorage.setItem("breakMinutes", breakMinutes);
+  localStorage.removeItem("preset");
+
+  // 8️⃣ Cerrar modal
+  closeSettingsModal();
+});
+
+/* ======================
+   SPINNERS INTERNOS ▲ ▼
+====================== */
+document.querySelectorAll(".input-wrapper").forEach(wrapper => {
+  const input = wrapper.querySelector("input");
+  const up = wrapper.querySelector(".spin-up");
+  const down = wrapper.querySelector(".spin-down");
+
+  let interval = null;
+  let speed = 180;
+
+  function startChanging(delta) {
+    if (interval) return;
+
+    input.value = Math.max(1, Number(input.value || 1) + delta);
+
+    interval = setInterval(() => {
+      input.value = Math.max(1, Number(input.value || 1) + delta);
+
+      // acelera progresivamente
+      if (speed > 30) {
+        speed -= 30;
+        clearInterval(interval);
+        interval = setInterval(() => {
+          input.value = Math.max(1, Number(input.value || 1) + delta);
+        }, speed);
+      }
+    }, speed);
+  }
+
+  function stopChanging() {
+    clearInterval(interval);
+    interval = null;
+    speed = 180;
+  }
+
+  // SUBIR
+  up.addEventListener("mousedown", () => startChanging(1));
+  up.addEventListener("mouseup", stopChanging);
+  up.addEventListener("mouseleave", stopChanging);
+
+  // BAJAR
+  down.addEventListener("mousedown", () => startChanging(-1));
+  down.addEventListener("mouseup", stopChanging);
+  down.addEventListener("mouseleave", stopChanging);
+
+  // Mobile
+  up.addEventListener("touchstart", e => {
+    e.preventDefault();
+    startChanging(1);
+  });
+
+  down.addEventListener("touchstart", e => {
+    e.preventDefault();
+    startChanging(-1);
+  });
+
+  document.addEventListener("touchend", stopChanging);
 });
 
 /* ======================
@@ -431,11 +543,13 @@ feedbackText.addEventListener("keydown", (e) => {
   }
 });
 
-modalMinutes.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") {
-    e.preventDefault();     // evita comportamientos raros
-    modalApply.click();     // simula click en "Aplicar"
-  }
+[workInput, breakInput].forEach(input => {
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      modalApply.click();
+    }
+  });
 });
 
 async function launchConfetti() {
@@ -512,29 +626,50 @@ darkToggle.addEventListener("click", () => {
 /* ======================
    INIT
 ====================== */
+/* ======================
+   INIT
+====================== */
 document.title = "MyPomo";
 
-// 1️⃣ restaurar tiempo personalizado (prioridad máxima)
-const savedMinutes = localStorage.getItem("workMinutes");
-
-if (savedMinutes) {
-  applyCustomTime(Number(savedMinutes));
-} else {
-  // 2️⃣ si no hay personalizado, restaurar preset
-  const savedPreset = localStorage.getItem("preset");
-
-  if (savedPreset) {
-    const { work, break: rest, label } = JSON.parse(savedPreset);
-    applyPreset(work, rest, label);
-  } else {
-    // 3️⃣ fallback absoluto
-    applyPreset(25, 5, "🍅 Pomodoro");
-  }
+// Modo oscuro al cargar
+if (localStorage.getItem("darkMode") === "enabled") {
+  document.body.classList.add("dark");
+  darkToggle.textContent = "☀️";
 }
 
-// UI final
-updateTimer();
-updateToggleButton();
+// Restaurar estado del timer
+const savedMinutes = localStorage.getItem("workMinutes");
+const savedBreak = localStorage.getItem("breakMinutes");
+const savedPreset = localStorage.getItem("preset");
+
+if (savedMinutes && savedBreak) {
+  const w = Number(savedMinutes);
+  const b = Number(savedBreak);
+
+  if (w === 25 && b === 5) {
+    applyPreset(25, 5, "🍅 Pomodoro");
+  } else {
+    workTime = w * 60;
+    breakTime = b * 60;
+    timeLeft = workTime;
+    isWork = true;
+    hasStarted = false;
+
+    currentModeLabel = "Personalizado 🎯";
+    setModeText("Modo: Personalizado 🎯");
+
+    updateTimer();
+    updateToggleButton();
+  }
+
+} else if (savedPreset) {
+  const { work, break: rest, label } = JSON.parse(savedPreset);
+  applyPreset(work, rest, label);
+
+} else {
+  // Usuario nuevo → Pomodoro
+  applyPreset(25, 5, "🍅 Pomodoro");
+}
 
 // Accesibilidad
 document.body.tabIndex = -1;

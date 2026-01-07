@@ -236,27 +236,18 @@ body.dark .theme-btn {
 }
 
 .modal-actions {
+  width: 100%;                 /* 🔑 CLAVE */
   display: flex;
-  justify-content: space-between;
-  gap: 10px;
+  justify-content: center;     /* centrados */
+  gap: 16px;
+  margin-top: 8px;
 }
 
 .modal-actions button {
   font-size: 14px;      /* texto más grande */
   padding: 10px 16px;   /* botón más cómodo */
   border-radius: 8px;
-}
-
-#modal-minutes {
-  font-size: 20px;       /* mismo tamaño siempre */
-  padding: 12px 14px;
-  font-weight: 500;
-}
-
-#modal-minutes::placeholder {
-  font-size: inherit;    /* 🔑 mismo tamaño que el texto */
-  font-weight: inherit;
-  opacity: 0.6;          /* opcional: estilo placeholder */
+  min-width: 110px;
 }
 
 /* Reset desactivado */
@@ -428,4 +419,154 @@ body.dark .theme-btn {
     font-size: 15px;
   }
 
+}
+
+/* ===== SETTINGS MODAL V3 (CENTRADO) ===== */
+
+.settings-modal {
+  width: 360px;
+  max-width: 90vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+
+  /* 🔑 asegura que TODO quede dentro */
+  box-sizing: border-box;
+}
+
+/* Header */
+.settings-header {
+  text-align: center;
+}
+
+.settings-header h2 {
+  margin: 0;
+  font-size: 22px;
+}
+
+.settings-header p {
+  margin: 4px 0 0;
+  font-size: 14px;
+  opacity: 0.7;
+}
+
+/* Controles */
+.settings-controls {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  width: 100%;
+}
+
+.setting-card {
+  background: #2a2a2a;
+  border-radius: 14px;
+  padding: 16px;
+  width: 150px;
+  text-align: center;
+}
+
+.setting-card label {
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+.setting-card input {
+  margin-top: 8px;
+  width: 100%;
+  font-size: 26px;
+  text-align: center;
+  border: none;
+  border-radius: 8px;
+  padding: 8px;
+  background: #1e1e1e;
+  color: white;
+}
+
+.setting-card input:focus {
+  outline: 2px solid #4CAF50;
+}
+
+.setting-card .unit {
+  margin-top: 6px;
+  display: block;
+  font-size: 12px;
+  opacity: 0.6;
+}
+
+/* Responsive */
+@media (max-width: 420px) {
+  .settings-controls {
+    flex-direction: column;
+  }
+}
+
+/* ===== QUITAR SPINNERS NATIVOS ===== */
+
+/* Chrome, Edge, Opera */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* Safari (extra seguridad) */
+input[type="number"] {
+  appearance: textfield;
+}
+
+/* ===== INPUT CON SPINNERS INTERNOS ===== */
+
+.input-wrapper {
+  position: relative;
+  width: 100%;
+  
+}
+
+.input-wrapper input {
+  width: 100%;
+  font-size: 26px;
+  padding: 12px 40px 12px 12px; /* espacio para ▲ ▼ */
+  border-radius: 10px;
+  background: #1e1e1e;
+  color: white;
+  border: none;
+  box-sizing: border-box;
+}
+
+/* Contenedor ▲ ▼ */
+.spin-buttons {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  bottom: 6px;
+  width: 26px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+
+  background: #2a2a2a;
+  border-radius: 8px;
+}
+
+/* Botones individuales */
+.spin-buttons button {
+  flex: 1;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 12px;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.spin-buttons button:hover {
+  background: #4CAF50;
 }

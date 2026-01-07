@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>MyPomo - Pomodoro Sencillo y Rápido, Hecho Para Ti</title>
+  <title>MyPomo - Temporiazdor Sencillo, Rápido y Hecho Para Ti</title>
 
 <meta
   name="description"
@@ -133,24 +133,57 @@
 
   </div>
 
-  <!-- MODAL (FUERA DEL CONTAINER) -->
-  <div id="settings-modal" class="modal hidden">
-    <div class="modal-content">
-      <h2>⏱ Configurar duración</h2>
+  <!-- MODAL SETTINGS -->
+<div id="settings-modal" class="modal hidden">
+  <div class="modal-content settings-modal">
 
-      <input
-        type="number"
-        id="modal-minutes"
-        min="1"
-        placeholder="Minutos"
-      >
-
-      <div class="modal-actions">
-        <button id="modal-cancel">Cancelar</button>
-        <button id="modal-apply">Aplicar</button>
-      </div>
+    <!-- HEADER -->
+    <div class="settings-header">
+      <h2>⏱ Timers (Minutos)</h2>
     </div>
+
+    <!-- CONTROLES -->
+    <div class="settings-controls">
+
+      <div class="setting-card">
+        <label>Pomodoro</label>
+
+        <div class="input-wrapper">
+          <input type="number" id="work-minutes" min="1" value="25" />
+          <div class="spin-buttons">
+            <button class="spin-up">▲</button>
+            <button class="spin-down">▼</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="setting-card">
+        <label>Break</label>
+
+        <div class="input-wrapper">
+          <input type="number" id="break-minutes" min="1" value="5" />
+          <div class="spin-buttons">
+            <button class="spin-up">▲</button>
+            <button class="spin-down">▼</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- BOTONES -->
+    <div class="modal-actions">
+      <button id="modal-cancel">Cancelar</button>
+      <button id="modal-apply">Aplicar</button>
+    </div>
+
   </div>
+</div>
+
+</div>
+
+
+  <!-- MODAL DE FEEDBACK -->
 
  <button id="feedback-btn" class="feedback-btn">Feedback 💬</button>
  <div id="feedback-modal" class="modal hidden">
